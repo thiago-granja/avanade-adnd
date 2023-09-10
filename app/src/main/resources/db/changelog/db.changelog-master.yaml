@@ -1,0 +1,318 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: thiago
+      changes:
+        - createTable:
+            tableName: character
+            columns:
+              - column:
+                  name: id
+                  type: long
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+              - column:
+                  name: type
+                  type: varchar(7)
+              - column:
+                  name: hp
+                  type: smallint
+              - column:
+                  name: strength
+                  type: smallint
+              - column:
+                  name: defense
+                  type: smallint
+              - column:
+                  name: agility
+                  type: smallint
+              - column:
+                  name: dice_quantity
+                  type: smallint
+              - column:
+                  name: dice_faces
+                  type: smallint
+
+  - changeSet:
+      id: 2
+      author: thiago
+      changes:
+        - createTable:
+            tableName: battle
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: next_step
+                  type: text
+              - column:
+                  name: is_active
+                  type: boolean
+
+  - changeSet:
+      id: 3
+      author: thiago
+      changes:
+        - createTable:
+            tableName: battle_step
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: battle_id
+                  type: UUID
+              - column:
+                  name: turn
+                  type: smallint
+              - column:
+                  name: turn_step
+                  type: smallint
+              - column:
+                  name: player_message
+                  type: text
+              - column:
+                  name: step_message
+                  type: text
+              - column:
+                  name: dice_roll
+                  type: smallint
+
+  - changeSet:
+      id: 4
+      author: thiago
+      changes:
+        - createTable:
+            tableName: battle_participant
+            columns:
+              - column:
+                  name: id
+                  type: long
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: battle_id
+                  type: UUID
+              - column:
+                  name: char_id
+                  type: long
+              - column:
+                  name: hp
+                  type: smallint
+              - column:
+                  name: initiative
+                  type: smallint
+              - column:
+                  name: player_character
+                  type: boolean
+
+  - changeSet:
+      id: 5
+      author: thiago
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: battle_step
+            baseColumnNames: battle_id
+            constraintName: fk_battle_step_battle
+            referencedTableName: battle
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: battle_participant
+            baseColumnNames: battle_id
+            constraintName: fk_battle_participant_battle
+            referencedTableName: battle
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: battle_participant
+            baseColumnNames: char_id
+            constraintName: fk_battle_participant_character
+            referencedTableName: character
+            referencedColumnNames: id
+
+  - changeSet:
+      id: 6
+      author: thiago
+      changes:
+        - insert:
+            tableName: character
+            columns:
+              - column:
+                  name: name
+                  value: "Guerreiro"
+              - column:
+                  name: type
+                  value: "hero"
+              - column:
+                  name: hp
+                  valueNumeric: 20
+              - column:
+                  name: strength
+                  valueNumeric: 7
+              - column:
+                  name: defense
+                  valueNumeric: 5
+              - column:
+                  name: agility
+                  valueNumeric: 6
+              - column:
+                  name: dice_quantity
+                  valueNumeric: 1
+              - column:
+                  name: dice_faces
+                  valueNumeric: 12
+
+        - insert:
+            tableName: character
+            columns:
+              - column:
+                  name: name
+                  value: "Bárbaro"
+              - column:
+                  name: type
+                  value: "hero"
+              - column:
+                  name: hp
+                  valueNumeric: 21
+              - column:
+                  name: strength
+                  valueNumeric: 10
+              - column:
+                  name: defense
+                  valueNumeric: 2
+              - column:
+                  name: agility
+                  valueNumeric: 5
+              - column:
+                  name: dice_quantity
+                  valueNumeric: 2
+              - column:
+                  name: dice_faces
+                  valueNumeric: 8
+
+        - insert:
+            tableName: character
+            columns:
+              - column:
+                  name: name
+                  value: "Cavaleiro"
+              - column:
+                  name: type
+                  value: "hero"
+              - column:
+                  name: hp
+                  valueNumeric: 26
+              - column:
+                  name: strength
+                  valueNumeric: 6
+              - column:
+                  name: defense
+                  valueNumeric: 8
+              - column:
+                  name: agility
+                  valueNumeric: 3
+              - column:
+                  name: dice_quantity
+                  valueNumeric: 2
+              - column:
+                  name: dice_faces
+                  valueNumeric: 6
+
+        - insert:
+            tableName: character
+            columns:
+              - column:
+                  name: name
+                  value: "Orc"
+              - column:
+                  name: type
+                  value: "monster"
+              - column:
+                  name: hp
+                  valueNumeric: 42
+              - column:
+                  name: strength
+                  valueNumeric: 7
+              - column:
+                  name: defense
+                  valueNumeric: 1
+              - column:
+                  name: agility
+                  valueNumeric: 2
+              - column:
+                  name: dice_quantity
+                  valueNumeric: 3
+              - column:
+                  name: dice_faces
+                  valueNumeric: 4
+
+        - insert:
+            tableName: character
+            columns:
+              - column:
+                  name: name
+                  value: "Gigante"
+              - column:
+                  name: type
+                  value: "monster"
+              - column:
+                  name: hp
+                  valueNumeric: 34
+              - column:
+                  name: strength
+                  valueNumeric: 10
+              - column:
+                  name: defense
+                  valueNumeric: 4
+              - column:
+                  name: agility
+                  valueNumeric: 4
+              - column:
+                  name: dice_quantity
+                  valueNumeric: 2
+              - column:
+                  name: dice_faces
+                  valueNumeric: 6
+
+        - insert:
+            tableName: character
+            columns:
+              - column:
+                  name: name
+                  value: "Lobisomem"
+              - column:
+                  name: type
+                  value: "monster"
+              - column:
+                  name: hp
+                  valueNumeric: 34
+              - column:
+                  name: strength
+                  valueNumeric: 7
+              - column:
+                  name: defense
+                  valueNumeric: 4
+              - column:
+                  name: agility
+                  valueNumeric: 7
+              - column:
+                  name: dice_quantity
+                  valueNumeric: 2
+              - column:
+                  name: dice_faces
+                  valueNumeric: 4
