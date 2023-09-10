@@ -3,6 +3,45 @@ databaseChangeLog:
       id: 1
       author: thiago
       changes:
+        - createTable:
+            tableName: character
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: text
+              - column:
+                  name: type
+                  type: varchar(7)
+              - column:
+                  name: hp
+                  type: smallint
+              - column:
+                  name: strength
+                  type: smallint
+              - column:
+                  name: defense
+                  type: smallint
+              - column:
+                  name: agility
+                  type: smallint
+              - column:
+                  name: dice_quantity
+                  type: smallint
+              - column:
+                  name: dice_faces
+                  type: smallint
+
+  - changeSet:
+      id: 2
+      author: thiago
+      changes:
         - insert:
             tableName: character
             columns:
