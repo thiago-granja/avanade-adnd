@@ -15,4 +15,37 @@ public class BattleService {
     public Battle createBattle(Battle battle) {
         return battleRepository.save(battle);
     }
+
+    public String getNextStep(Battle battle){
+        String nextStep = battle.getNextStep();
+        return nextStep;
+    }
+
+    public Boolean checkValidStep(String current, String request){
+        if (current == request) return true;
+        return false;
+    }
+
+    public String nextStepErrorMessage(String nextStep){
+        String response = "";
+
+        switch(nextStep) {
+            case "attack":
+                response = "Você deve atacar agora";
+                break;
+            
+            case "defend":
+                response = "Você deve se defender agora";
+                break;
+
+            case "damage":
+                response = "Você deve fazer a rolagem de dano";
+                break;
+
+            default:
+                break;
+        }
+
+        return response;
+    }
 }
