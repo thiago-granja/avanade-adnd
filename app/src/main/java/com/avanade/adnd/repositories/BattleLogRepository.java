@@ -6,7 +6,8 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.avanade.adnd.entities.Battle;
+import com.avanade.adnd.entities.BattleLog;
 
-public interface BattleRepository extends JpaRepository<Battle, UUID> {
-    List<Battle> findByIsActiveTrue();
+public interface BattleLogRepository extends JpaRepository<BattleLog, UUID> {
+    List<BattleLog> findByBattleOrderByCreatedAtAsc(Battle battle);
 }
