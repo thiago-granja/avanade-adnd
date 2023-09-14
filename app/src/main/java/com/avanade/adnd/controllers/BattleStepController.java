@@ -1,12 +1,13 @@
 package com.avanade.adnd.controllers;
 
-import com.avanade.adnd.entities.BattleStep;
+import com.avanade.adnd.dtos.BattleDTO;
 import com.avanade.adnd.services.BattleStepService;
+
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,12 +18,23 @@ public class BattleStepController {
     @Autowired
     private BattleStepService battleStepService;
 
-    @PostMapping("/attack")
-    public ResponseEntity<BattleStep> addStep(@RequestBody BattleStep step) {
-        BattleStep addedStep = battleStepService.addStep(step);
-        return new ResponseEntity<>(addedStep, HttpStatus.CREATED);
+    @PostMapping("/{battle_id}/attack")
+    public BattleDTO attack(@PathVariable UUID battle_id) {
+        return battleStepService.runBattleStep(battle_id, "attack");
     }
 
-/*     @PostMapping("/defend")
-    @PostMapping("/damage") */
+    @PostMapping("/{battle_id}/defend")
+    public BattleDTO defend(@PathVariable UUID battle_id) {
+        return battleStepService.runBattleStep(battle_id, "defend");
+    }
+
+    @PostMapping("/{battle_id}/damage")
+    public BattleDTO damage(@PathVariable UUID battle_id) {
+        return battleStepService.runBattleStep(battle_id, "damage");
+    }
+
+    @PostMapping("/{battle_id}/initiative")
+    public BattleDTO initiative(@PathVariable UUID battle_id) {
+        return battleStepService.runBattleStep(battle_id, "initiative");
+    }
 }
