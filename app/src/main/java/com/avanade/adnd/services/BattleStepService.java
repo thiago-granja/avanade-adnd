@@ -12,6 +12,8 @@ import com.avanade.adnd.repositories.BattleStepRepository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -199,5 +201,159 @@ public class BattleStepService {
     private void updateBattleTurn(Battle battle) {
         battle.setTurn(battle.getTurn()+1);
         battleRepository.save(battle);
+    }
+
+    public BattleParticipant getCharacter(List<BattleParticipant> entries, Boolean playerCharacter) {
+        return entries.stream()
+                      .filter(entry -> entry.getPlayerCharacter().equals(playerCharacter))
+                      .findFirst()
+                      .orElse(null);
+    }
+    
+    public BattleDTO runBattleStep(UUID battle_id, String operation){
+        BattleDTO resultMessage;
+        Optional<Battle> battleOptional = battleRepository.findById(battle_id);
+        Battle battle = battleOptional.orElseThrow(() -> new RuntimeException("Batalha não encontrada para o ID: " + battle_id));
+        
+        if (!battle.getIsActive()) {
+            resultMessage = new BattleDTO.Builder()
+                        .message("Essa batalha já foi finalizada.")
+                        .build();
+            return resultMessage;
+        }
+
+        String nextStep = battle.getNextStep();
+        if (operation != nextStep) {
+            switch(nextStep) {
+                case "attack":
+                    resultMessage = new BattleDTO.Builder()
+                        .message("Você deve atacar agora.")
+                        .build();
+                    break;
+                
+                case "defense":
+                    resultMessage = new BattleDTO.Builder()
+                        .message("Você deve se defender agora.")
+                        .build();
+                    break;
+
+                case "damage":
+                    resultMessage = new BattleDTO.Builder()
+                        .message("Você deve realizar a rolagem de dano.")
+                        .build();
+                    break;
+
+                default:
+                    resultMessage = new BattleDTO.Builder()
+                        .message("Você deve rolar a iniciativa primeiro.")
+                        .build();
+                    break;
+            }
+            return resultMessage;
+        }
+        
+        List<BattleParticipant> participants = getAliveBattleParticipants(battle);
+        BattleParticipant player = getCharacter(participants, true);
+        BattleParticipant computer = getCharacter(participants, false);
+
+        if (operation == "attack") {
+            RollResultDTO attack = rollAttack(player);
+            RollResultDTO defense = rollAttack(computer);
+
+            String attackMessage = "O " + player.getCharacter().getName() + " se prepara para atacar... ";
+            
+            Boolean attackHasHit = checkIfAttackHit(attack, defense);
+            
+            resultMessage = new BattleDTO.Builder()
+                .turn(battle.getTurn())
+                .message(attackMessage + (attackHasHit ? "E acerta!" : "Mas erra."))
+                .roll(attack.getRolls())
+                .rollMessage(attack.getMessage())
+                .playerCharacter(player.getCharacter().getName())
+                .computerCharacter(computer.getCharacter().getName())
+                .build();
+            
+            if (!attackHasHit) {              
+                updateNextStep(battle, player, computer);
+            }
+        }
+
+        if (operation == "damage") {
+            RollResultDTO damage = rollDamage(player);
+            String damageMessage = "O " + player.getCharacter().getName() + " golpeia firme e causa " + damage.getTotal() + " pontos de dano em seu oponente.";
+            resultMessage = new BattleDTO.Builder()
+                    .turn(battle.getTurn())
+                    .message(damageMessage)
+                    .roll(damage.getRolls())
+                    .rollMessage(damage.getMessage())
+                    .playerCharacter(player.getCharacter().getName())
+                    .computerCharacter(computer.getCharacter().getName())
+                    .build();
+            
+            takeDamage(computer, damage);
+        }
+
+        if (operation == "defense") {
+            RollResultDTO attack = rollAttack(computer);
+            RollResultDTO defense = rollAttack(player);
+
+            String attackMessage = "O " + computer.getCharacter().getName() + " se prepara para atacar... ";
+            
+            Boolean attackHasHit = checkIfAttackHit(attack, defense);
+
+            resultMessage = new BattleDTO.Builder()
+                    .turn(battle.getTurn())
+                    .message(attackMessage + (attackHasHit ? "E acerta." : "Mas erra!"))
+                    .roll(attack.getRolls())
+                    .rollMessage(attack.getMessage())
+                    .playerCharacter(player.getCharacter().getName())
+                    .computerCharacter(computer.getCharacter().getName())
+                    .build();
+
+            
+            if (attackHasHit) {
+                RollResultDTO damage = rollDamage(computer);
+                String damageMessage = "O " + player.getCharacter().getName() + " golpeia firme e causa " + damage.getTotal() + " pontos de dano em seu oponente.";
+                BattleDTO damageDTO = new BattleDTO.Builder()
+                        .message(damageMessage)
+                        .roll(damage.getRolls())
+                        .rollMessage(damage.getMessage())
+                        .build();
+
+                resultMessage.merge(damageDTO);
+
+                takeDamage(player, damage);
+            }
+        }
+
+        else {
+            battle.setTurn(1);
+            battleRepository.save(battle);
+            resultMessage = settleInitiatives(player, computer);
+        }
+
+        if (player.getHp() <= 0) {
+            endGame(battle);
+            resultMessage.setMessage(resultMessage.getMessage() + "\nA batalha acabou. Você foi derrotado.");
+        }
+
+        if (computer.getHp() <= 0) {
+            endGame(battle);
+            resultMessage.setMessage(resultMessage.getMessage() + "\nA batalha acabou. Você venceu!");
+        }
+        
+        BattleStep battleStep = new BattleStep();
+        battleStep.setBattle(battle);
+        battleStep.setPlayer(player);
+        battleStep.setComputer(computer);
+        battleStep.setTurn(battle.getTurn());
+        battleStep.setRoll(resultMessage.getRoll());
+        battleStep.setRoll_message(resultMessage.getRoll_message());
+        battleStep.setMessage(resultMessage.getMessage());
+        
+        battleStepRepository.save(battleStep);
+        addStep(battleStep);
+        updateNextStep(battle, player, computer);
+        return resultMessage;
     }
 }
