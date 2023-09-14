@@ -1,11 +1,13 @@
 package com.avanade.adnd.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,5 +39,10 @@ public class BattleController {
         return ResponseEntity.ok(activeBattles);
     }
 
-    
+    @GetMapping("/{id}")
+    public ResponseEntity<Battle> getBattleById(@PathVariable UUID id) {
+        return battleService.getBattleById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

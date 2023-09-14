@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
    
 @Service
 public class BattleService {
@@ -86,4 +87,8 @@ public class BattleService {
         return battleRepository.findByIsActiveTrue();
     }
 
+    public Optional<Battle> getBattleById(UUID id) {
+        return battleRepository.findById(id);
+    }
+    
 }
