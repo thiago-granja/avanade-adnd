@@ -28,4 +28,10 @@ public class BattleParticipant {
     private Integer initiative;
     private Boolean playerCharacter;
     
+    
+    public BattleParticipant(Character character, boolean isPlayerCharacter) {
+        this.character = character;
+        this.playerCharacter = isPlayerCharacter;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.avanade.adnd.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -61,4 +62,13 @@ public class CharacterService {
             throw new IllegalStateException("Não é possível deletar o personagem pois ele tem registros relacionados a ele.");
         }
     }
+
+    public Optional<Character> getRandomMonster() {
+        Optional<Character> randomMonster = characterRepository.findRandomMonster();
+        if (randomMonster.isEmpty()) {
+            return Optional.empty();
+        }
+        return randomMonster;
+    }
+    
 }

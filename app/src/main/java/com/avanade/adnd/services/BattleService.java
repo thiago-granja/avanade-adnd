@@ -3,49 +3,76 @@ package com.avanade.adnd.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.avanade.adnd.dtos.BattleDTO;
 import com.avanade.adnd.entities.Battle;
+import com.avanade.adnd.entities.BattleParticipant;
+import com.avanade.adnd.entities.BattleStep;
+import com.avanade.adnd.repositories.BattleParticipantRepository;
 import com.avanade.adnd.repositories.BattleRepository;
+import com.avanade.adnd.entities.Character;
+
+import jakarta.persistence.EntityNotFoundException;
+
+import java.util.Optional;
+import java.util.Random;
    
 @Service
 public class BattleService {
 
     @Autowired
+    private CharacterService characterService;
+    
+    @Autowired
     private BattleRepository battleRepository;
 
-    public Battle createBattle(Battle battle) {
-        return battleRepository.save(battle);
-    }
+    @Autowired
+    private BattleStepService battleStepService;
 
-    public String getNextStep(Battle battle){
-        String nextStep = battle.getNextStep();
-        return nextStep;
-    }
+    @Autowired
+    private BattleParticipantRepository battleParticipantRepository;
 
-    public Boolean checkValidStep(String current, String request){
-        if (current == request) return true;
-        return false;
-    }
 
-    public String nextStepErrorMessage(String nextStep){
-        String response = "";
+    public BattleDTO generateBattle(BattleDTO battleDTO) {
+        Battle newBattle = new Battle(); 
+        battleRepository.save(newBattle);
+        BattleParticipant computer;
+        BattleParticipant player;
 
-        switch(nextStep) {
-            case "attack":
-                response = "Você deve atacar agora";
-                break;
-            
-            case "defend":
-                response = "Você deve se defender agora";
-                break;
+        Character playerCharacter = characterService
+            .getCharacterByName(battleDTO.getPlayer_character())
+            .orElseThrow(() -> new EntityNotFoundException("Personagem não encontrado: " + battleDTO.getPlayer_character()));
+        player = new BattleParticipant(playerCharacter, true);
+        player.setBattle(newBattle);
+        battleParticipantRepository.save(player);
 
-            case "damage":
-                response = "Você deve fazer a rolagem de dano";
-                break;
-
-            default:
-                break;
+        if (battleDTO.getComputer_character() != null) {
+            Character computerCharacter = characterService.getCharacterByName(battleDTO.getComputer_character())
+                .orElseThrow(() -> new EntityNotFoundException("Personagem não encontrado: " + battleDTO.getComputer_character()));
+        
+            computer = new BattleParticipant(computerCharacter, false);
+            computer.setBattle(newBattle);
+            battleParticipantRepository.save(computer);
+        
+        } else {
+            Optional<Character> optionalMonster = characterService.getRandomMonster();
+            if (optionalMonster.isPresent()) {
+                computer = new BattleParticipant(optionalMonster.get(), false);
+                computer.setBattle(newBattle);
+                battleParticipantRepository.save(computer);
+            } else {
+                throw new EntityNotFoundException("Nenhum monstro encontrado no banco de dados.");
+            }
         }
 
-        return response;
-    }
+        BattleDTO resultDTO = new BattleDTO.Builder()
+                    .playerCharacter(player.getCharacter().getName())
+                    .computerCharacter(computer.getCharacter().getName())
+                    .message("Batalha criada com sucesso! Utilize o ID " + newBattle.getId() + " para acessá-la.")
+                    .build();
+    
+        return resultDTO;
+
+}
+
+
 }
