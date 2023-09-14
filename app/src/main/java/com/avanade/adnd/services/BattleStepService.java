@@ -4,11 +4,9 @@ import com.avanade.adnd.dtos.BattleDTO;
 import com.avanade.adnd.dtos.RollResultDTO;
 import com.avanade.adnd.entities.Battle;
 import com.avanade.adnd.entities.BattleParticipant;
-import com.avanade.adnd.entities.BattleStep;
 import com.avanade.adnd.entities.Character;
 import com.avanade.adnd.repositories.BattleParticipantRepository;
 import com.avanade.adnd.repositories.BattleRepository;
-import com.avanade.adnd.repositories.BattleStepRepository;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,10 +20,6 @@ import org.springframework.stereotype.Service;
 public class BattleStepService {
 
     @Autowired
-    private BattleStepRepository battleStepRepository;
-
-
-    @Autowired
     private DiceRollerService diceRollerService;
 
     @Autowired
@@ -34,9 +28,8 @@ public class BattleStepService {
     @Autowired
     private BattleRepository battleRepository;
 
-    public BattleStep addStep(BattleStep step) {
-        return battleStepRepository.save(step);
-    }
+    @Autowired
+    private BattleService battleService;
 
     public RollResultDTO rollInitiative(BattleParticipant battleParticipant) {
         Character character = battleParticipant.getCharacter();
@@ -351,20 +344,9 @@ public class BattleStepService {
             resultMessage.setMessage(resultMessage.getMessage() + "\nA batalha acabou. Você venceu!");
         }
     
-        BattleStep battleStep = new BattleStep();
-        battleStep.setBattle(battle);
-        battleStep.setPlayer(player);
-        battleStep.setComputer(computer);
-        battleStep.setTurn(battle.getTurn());
-        battleStep.setPlayerRoll(resultMessage.getPlayerRoll());
-        battleStep.setPlayerRollMessage(resultMessage.getPlayerRollMessage());
-        battleStep.setComputerRoll(resultMessage.getComputerRoll());
-        battleStep.setComputerRollMessage(resultMessage.getComputerRollMessage());
-        battleStep.setMessage(resultMessage.getMessage());
-    
-        battleStepRepository.save(battleStep);
-        addStep(battleStep);
+        battleService.logBattleStep(battle, player, computer, resultMessage);
         updateNextStep(battle, player, computer);
+
         return resultMessage;
     }
 }

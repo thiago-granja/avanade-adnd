@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 
 import com.avanade.adnd.dtos.BattleDTO;
 import com.avanade.adnd.entities.Battle;
+import com.avanade.adnd.entities.BattleLog;
 import com.avanade.adnd.entities.BattleParticipant;
+import com.avanade.adnd.repositories.BattleLogRepository;
 import com.avanade.adnd.repositories.BattleParticipantRepository;
 import com.avanade.adnd.repositories.BattleRepository;
 import com.avanade.adnd.entities.Character;
@@ -27,6 +29,9 @@ public class BattleService {
 
     @Autowired
     private BattleParticipantRepository battleParticipantRepository;
+
+    @Autowired
+    private BattleLogRepository battleLogRepository;
 
 
     public BattleDTO generateBattle(BattleDTO battleDTO) {
@@ -89,5 +94,21 @@ public class BattleService {
     public Optional<Battle> getBattleById(UUID id) {
         return battleRepository.findById(id);
     }
+
+    void logBattleStep(Battle battle, BattleParticipant player, BattleParticipant computer, BattleDTO resultMessage) {
+        BattleLog battleLog = new BattleLog();
+        battleLog.setBattle(battle);
+        battleLog.setPlayer(player);
+        battleLog.setComputer(computer);
+        battleLog.setTurn(battle.getTurn());
+        battleLog.setPlayerRoll(resultMessage.getPlayerRoll());
+        battleLog.setPlayerRollMessage(resultMessage.getPlayerRollMessage());
+        battleLog.setComputerRoll(resultMessage.getComputerRoll());
+        battleLog.setComputerRollMessage(resultMessage.getComputerRollMessage());
+        battleLog.setMessage(resultMessage.getMessage());
+    
+        battleLogRepository.save(battleLog);
+    }
+    
     
 }
