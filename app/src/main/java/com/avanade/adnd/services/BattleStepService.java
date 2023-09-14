@@ -2,6 +2,7 @@ package com.avanade.adnd.services;
 
 import com.avanade.adnd.dtos.BattleDTO;
 import com.avanade.adnd.dtos.RollResultDTO;
+import com.avanade.adnd.entities.Battle;
 import com.avanade.adnd.entities.BattleParticipant;
 import com.avanade.adnd.entities.BattleStep;
 import com.avanade.adnd.entities.Character;
@@ -148,4 +149,55 @@ public class BattleStepService {
         return false;
     }
 
+    private List<BattleParticipant> getAliveBattleParticipants(Battle battle) {
+        List<BattleParticipant> participants = battleParticipantRepository.findActiveParticipants(battle);
+        return participants;
+    }
+
+    private List<String> getStepOrder(BattleParticipant player, BattleParticipant computer) {
+        List<String> stepOrder;
+        if (player.getInitiative() > computer.getInitiative()) {
+            stepOrder = Arrays.asList("attack", "damage", "defense");
+        } else {
+            stepOrder = Arrays.asList("defense", "attack", "damage");
+        }
+
+        return stepOrder;
+    }
+
+    private void updateNextStep(Battle battle, BattleParticipant player, BattleParticipant computer) {
+        String currentStep = battle.getNextStep();
+        if (currentStep == null || currentStep.isEmpty() || currentStep.isBlank()) {
+            battle.setNextStep("initiative");
+            battleRepository.save(battle);
+            return;
+        }
+
+        List<String> steps = getStepOrder(player, computer);
+
+        int currentIndex = steps.indexOf(currentStep);
+
+        if (currentIndex == -1 || currentIndex == steps.size() - 1) {
+            battle.setNextStep(steps.get(0));
+
+            if (currentIndex == steps.size() -1) {
+                updateBattleTurn(battle);
+            }
+        }
+
+        else {
+            battle.setNextStep(steps.get(currentIndex + 1));
+        }
+
+        battleRepository.save(battle);
+    }
+
+    private void endGame(Battle battle) {
+        battle.setIsActive(false);
+    }
+
+    private void updateBattleTurn(Battle battle) {
+        battle.setTurn(battle.getTurn()+1);
+        battleRepository.save(battle);
+    }
 }
