@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.avanade.adnd.entities.Battle;
+import com.avanade.adnd.dtos.BattleDTO;
 import com.avanade.adnd.services.BattleService;
 
 @RestController
@@ -19,8 +19,8 @@ public class BattleController {
     private BattleService battleService;
 
     @PostMapping
-    public ResponseEntity<Battle> createBattle(@RequestBody Battle battle) {
-        Battle createdBattle = battleService.createBattle(battle);
-        return new ResponseEntity<>(createdBattle, HttpStatus.CREATED);
+    public ResponseEntity<BattleDTO> createBattle(@RequestBody BattleDTO battleDTO) {
+        BattleDTO createdBattleDTO = battleService.generateBattle(battleDTO);
+        return new ResponseEntity<>(createdBattleDTO, HttpStatus.CREATED);
     }
 }
