@@ -24,8 +24,8 @@ public class BattleParticipant {
     @JoinColumn(name = "char_id")
     private Character character;
     
-    private Short hp;
-    private Short initiative;
+    private Integer hp;
+    private Integer initiative;
     private Boolean playerCharacter;
-
+    
 }
