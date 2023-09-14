@@ -45,4 +45,10 @@ public class BattleController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/{battle_id}/logs")
+    public ResponseEntity<Object> getBattleLogs(@PathVariable UUID battle_id) {
+        return battleService.getLogsForBattle(battle_id);
+    }
+    
 }

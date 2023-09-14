@@ -9,5 +9,5 @@ import com.avanade.adnd.entities.Battle;
 import com.avanade.adnd.entities.BattleLog;
 
 public interface BattleLogRepository extends JpaRepository<BattleLog, UUID> {
-    List<BattleLog> findByBattle(Battle battle);
+    List<BattleLog> findByBattleOrderByCreatedAtAsc(Battle battle);
 }

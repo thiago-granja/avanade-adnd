@@ -1,6 +1,8 @@
 package com.avanade.adnd.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.avanade.adnd.dtos.BattleDTO;
@@ -109,6 +111,23 @@ public class BattleService {
     
         battleLogRepository.save(battleLog);
     }
+
+    public ResponseEntity<Object> getLogsForBattle(UUID battleId) {
+        Battle battle = battleRepository.findById(battleId).orElse(null);
+
+        if (battle == null) {
+            return new ResponseEntity<>("A batalha não foi encontrada.", HttpStatus.NOT_FOUND);
+        }
+
+        List<BattleLog> logs = battleLogRepository.findByBattleOrderByCreatedAtAsc(battle);
+
+        if (logs.isEmpty()) {
+            return new ResponseEntity<>("Ainda não existem registros dessa batalha.", HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(logs, HttpStatus.OK);
+    }
+
     
     
 }
