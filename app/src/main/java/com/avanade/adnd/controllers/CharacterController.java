@@ -21,11 +21,11 @@ public class CharacterController {
     @Autowired
     private CharacterService characterService;
 
-    @PostMapping
+/*     @PostMapping
     public ResponseEntity<Character> registerCharacter(@Validated @RequestBody Character character) {
         Character savedCharacter = characterService.registerCharacter(character);
         return new ResponseEntity<>(savedCharacter, HttpStatus.CREATED);
-    }
+    } */
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
