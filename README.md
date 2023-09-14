@@ -49,14 +49,18 @@ Os personagens possuem os atributos abaixo:
 ## Configuração
 
 1. Clone o repositório.
+<br>
+
 2. Acesse o root do projeto:
     ```bash
         cd app
+  <br>
+
 3. Copie o arquivo `.env.example` para `.env`:
     ```bash
         cp .env.example .env
   <br>
-  
+
 4. Preencha as variáveis de ambiente no arquivo .env. Por exemplo:
 
     ```bash
@@ -76,11 +80,15 @@ Os personagens possuem os atributos abaixo:
 * Nota: Se o contêiner do banco de dados parar por qualquer motivo, execute o comando acima novamente.
 <br><br>
 2. Aguarde alguns segundos para que o banco de dados inicie corretamente.
+  
+  <br>
 
 3. Após o banco de dados estar em execução, rode a aplicação com o seguinte comando:
 
     ```bash
     docker-compose up app
+  <br>
+
 4. O aplicativo agora deve estar rodando na porta especificada (por padrão, 8080). Agora você pode usar a API para criar personagens, iniciar batalhas e muito mais.
 
 <br><br>
