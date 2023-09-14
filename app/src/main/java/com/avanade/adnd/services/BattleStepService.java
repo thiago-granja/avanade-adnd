@@ -104,10 +104,12 @@ public class BattleStepService {
                         : computer.getCharacter().getName());
 
         BattleDTO message = new BattleDTO.Builder()
-                                    .roll(playerRoll.getRolls())
-                                    .rollMessage(playerRoll.getMessage())
+                                    .playerRoll(playerRoll.getRolls())
+                                    .playerRollMessage(playerRoll.getMessage())
                                     .playerCharacter(player.getCharacter().getName())
                                     .computerCharacter(computer.getCharacter().getName())
+                                    .computerRoll(computerRoll.getRolls())
+                                    .computerRollMessage(computerRoll.getMessage())
                                     .message("O " + winner + " ataca primeiro!")
                                     .build();
 
@@ -214,151 +216,152 @@ public class BattleStepService {
         BattleDTO resultMessage;
         Optional<Battle> battleOptional = battleRepository.findById(battle_id);
         Battle battle = battleOptional.orElseThrow(() -> new RuntimeException("Batalha não encontrada para o ID: " + battle_id));
-        
+    
         if (!battle.getIsActive()) {
             resultMessage = new BattleDTO.Builder()
                         .message("Essa batalha já foi finalizada.")
                         .build();
             return resultMessage;
         }
-
+    
         String nextStep = battle.getNextStep();
         if (!operation.equals(nextStep)) {
-            
+    
             switch(nextStep) {
                 case "attack":
                     resultMessage = new BattleDTO.Builder()
                         .message("Você deve atacar agora.")
                         .build();
-                    break;
-                
+                    return resultMessage;
+    
                 case "defense":
                     resultMessage = new BattleDTO.Builder()
                         .message("Você deve se defender agora.")
                         .build();
-                    break;
-
+                    return resultMessage;
+    
                 case "damage":
                     resultMessage = new BattleDTO.Builder()
                         .message("Você deve realizar a rolagem de dano.")
                         .build();
-                    break;
-
+                    return resultMessage;
+    
                 case "initiative":
                     resultMessage = new BattleDTO.Builder()
-                    .message("Você deve rolar a iniciativa primeiro.")
-                    .build();
-                    break;
+                        .message("Você deve rolar a iniciativa primeiro.")
+                        .build();
+                    return resultMessage;
+    
                 default:
                     resultMessage = new BattleDTO.Builder()
-                    .message("Algo deu errado.")
-                    .build();
-                    break;
+                        .message("Algo deu errado.")
+                        .build();
+                    return resultMessage;
             }
-            return resultMessage;
         }
-        
+    
         List<BattleParticipant> participants = getAliveBattleParticipants(battle);
         BattleParticipant player = getCharacter(participants, true);
-
-
         BattleParticipant computer = getCharacter(participants, false);
-
+    
         if ("attack".equals(operation)) {
             RollResultDTO attack = rollAttack(player);
-            RollResultDTO defense = rollAttack(computer);
-
+            RollResultDTO defense = rollDefense(computer);
+    
             String attackMessage = "O " + player.getCharacter().getName() + " se prepara para atacar... ";
-            
             Boolean attackHasHit = checkIfAttackHit(attack, defense);
-            
+    
             resultMessage = new BattleDTO.Builder()
                 .turn(battle.getTurn())
                 .message(attackMessage + (attackHasHit ? "E acerta!" : "Mas erra."))
-                .roll(attack.getRolls())
-                .rollMessage(attack.getMessage())
+                .playerRoll(attack.getRolls())
+                .playerRollMessage(attack.getMessage())
+                .computerRoll(defense.getRolls())
+                .computerRollMessage(defense.getMessage())
                 .playerCharacter(player.getCharacter().getName())
                 .computerCharacter(computer.getCharacter().getName())
                 .build();
-            
+    
             if (!attackHasHit) {              
                 updateNextStep(battle, player, computer);
             }
         }
-
+    
         else if ("damage".equals(operation)) {
             RollResultDTO damage = rollDamage(player);
             String damageMessage = "O " + player.getCharacter().getName() + " golpeia firme e causa " + damage.getTotal() + " pontos de dano em seu oponente.";
+    
             resultMessage = new BattleDTO.Builder()
-                    .turn(battle.getTurn())
-                    .message(damageMessage)
-                    .roll(damage.getRolls())
-                    .rollMessage(damage.getMessage())
-                    .playerCharacter(player.getCharacter().getName())
-                    .computerCharacter(computer.getCharacter().getName())
-                    .build();
-            
+                .turn(battle.getTurn())
+                .message(damageMessage)
+                .playerRoll(damage.getRolls())
+                .playerRollMessage(damage.getMessage())
+                .playerCharacter(player.getCharacter().getName())
+                .computerCharacter(computer.getCharacter().getName())
+                .build();
+    
             takeDamage(computer, damage);
         }
-
+    
         else if ("defense".equals(operation)) {
             RollResultDTO attack = rollAttack(computer);
-            RollResultDTO defense = rollAttack(player);
-
+            RollResultDTO defense = rollDefense(player);
+    
             String attackMessage = "O " + computer.getCharacter().getName() + " se prepara para atacar... ";
-            
             Boolean attackHasHit = checkIfAttackHit(attack, defense);
-
+    
             resultMessage = new BattleDTO.Builder()
-                    .turn(battle.getTurn())
-                    .message(attackMessage + (attackHasHit ? "E acerta." : "Mas erra!"))
-                    .roll(attack.getRolls())
-                    .rollMessage(attack.getMessage())
-                    .playerCharacter(player.getCharacter().getName())
-                    .computerCharacter(computer.getCharacter().getName())
-                    .build();
-
-            
+                .turn(battle.getTurn())
+                .message(attackMessage + (attackHasHit ? "E acerta!" : "Mas erra!"))
+                .playerRoll(defense.getRolls())
+                .playerRollMessage(defense.getMessage())
+                .computerRoll(attack.getRolls())
+                .computerRollMessage(attack.getMessage())
+                .playerCharacter(player.getCharacter().getName())
+                .computerCharacter(computer.getCharacter().getName())
+                .build();
+    
             if (attackHasHit) {
                 RollResultDTO damage = rollDamage(computer);
                 String damageMessage = "O " + player.getCharacter().getName() + " golpeia firme e causa " + damage.getTotal() + " pontos de dano em seu oponente.";
                 BattleDTO damageDTO = new BattleDTO.Builder()
-                        .message(damageMessage)
-                        .roll(damage.getRolls())
-                        .rollMessage(damage.getMessage())
-                        .build();
-
+                    .message(damageMessage)
+                    .playerRoll(damage.getRolls())
+                    .playerRollMessage(damage.getMessage())
+                    .build();
+    
                 resultMessage.merge(damageDTO);
-
                 takeDamage(player, damage);
             }
         }
-
+    
         else {
             battle.setTurn(1);
             battleRepository.save(battle);
             resultMessage = settleInitiatives(player, computer);
         }
-
+    
         if (player.getHp() <= 0) {
             endGame(battle);
             resultMessage.setMessage(resultMessage.getMessage() + "\nA batalha acabou. Você foi derrotado.");
         }
-
+    
         else if (computer.getHp() <= 0) {
             endGame(battle);
             resultMessage.setMessage(resultMessage.getMessage() + "\nA batalha acabou. Você venceu!");
         }
-        
+    
         BattleStep battleStep = new BattleStep();
         battleStep.setBattle(battle);
         battleStep.setPlayer(player);
         battleStep.setComputer(computer);
         battleStep.setTurn(battle.getTurn());
-        battleStep.setRoll(resultMessage.getRoll());
-        battleStep.setRoll_message(resultMessage.getRoll_message());
+        battleStep.setPlayerRoll(resultMessage.getPlayerRoll());
+        battleStep.setPlayerRollMessage(resultMessage.getPlayerRollMessage());
+        battleStep.setComputerRoll(resultMessage.getComputerRoll());
+        battleStep.setComputerRollMessage(resultMessage.getComputerRollMessage());
         battleStep.setMessage(resultMessage.getMessage());
-        
+    
         battleStepRepository.save(battleStep);
         addStep(battleStep);
         updateNextStep(battle, player, computer);

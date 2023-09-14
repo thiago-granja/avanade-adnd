@@ -1,8 +1,12 @@
 package com.avanade.adnd.entities;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.annotation.CreatedDate;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -28,8 +32,14 @@ public class BattleStep {
     @JoinColumn(name = "battle_participant_computer_id")
     private BattleParticipant computer;
 
-    private List<Integer> roll;
-    private String roll_message;
+    private List<Integer> playerRoll;
+    private String playerRollMessage;
+    private List<Integer> computerRoll;
+    private String computerRollMessage;
     private String message;
     private Integer turn;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 }
