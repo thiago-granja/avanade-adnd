@@ -56,6 +56,7 @@ Os personagens possuem os atributos abaixo:
     ```bash
         cp .env.example .env
   <br>
+  
 4. Preencha as variáveis de ambiente no arquivo .env. Por exemplo:
 
     ```bash
