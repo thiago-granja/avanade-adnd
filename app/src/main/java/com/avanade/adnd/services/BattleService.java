@@ -12,6 +12,7 @@ import com.avanade.adnd.entities.Character;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import java.util.List;
 import java.util.Optional;
    
 @Service
@@ -81,5 +82,8 @@ public class BattleService {
         }
     }
 
-    
+    public List<Battle> getAllActiveBattles() {
+        return battleRepository.findByIsActiveTrue();
+    }
+
 }
