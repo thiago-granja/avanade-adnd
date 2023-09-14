@@ -20,7 +20,7 @@ public class CharacterService {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-/*     public Character registerCharacter(Character character) {
+    public Character registerCharacter(Character character) {
             Set<ConstraintViolation<Character>> violations = validator.validate(character);
             
             if (!violations.isEmpty()) {
@@ -36,6 +36,6 @@ public class CharacterService {
             }
 
             return characterRepository.save(character);
-    } */
+    }
 
 }
