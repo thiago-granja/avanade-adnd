@@ -27,6 +27,7 @@ Os personagens possuem os atributos abaixo:
     - Defense é sua defesa, este valor é adicionado às jogadas de defesa.
     - Agility é sua agilidade, este valor é adicionado às jogadas de ataque e defesa.
     - Dice Quantity e Dice Faces são a quantidade de dados e a quantidade de lados do dado, respectivamente. Um dado de 12 lados é conhecido como 1d12, por exemplo. Neste caso, diceQuantity = 1 e diceFaces = 12. É utilizado para rolagens de dano.
+    - Os atributos gerais devem ser números inteiros de 1 a 30. Já para os dados, as faces devem ser de 1 a 20 e a quantidade de 1 a 10.
 
 - A primeira ação no combate é a rolagem de iniciativa, que determinará a sequência de ação dos lutadores.
 - Após isso, serão realizados testes de ataque/defesa para checar se um golpe conecta (o valor da rolagem de ataque deve superior à da defesa)
