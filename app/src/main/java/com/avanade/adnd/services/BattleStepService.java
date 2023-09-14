@@ -38,7 +38,7 @@ public class BattleStepService {
         return battleStepRepository.save(step);
     }
 
-        public RollResultDTO rollInitiative(BattleParticipant battleParticipant) {
+    public RollResultDTO rollInitiative(BattleParticipant battleParticipant) {
         Character character = battleParticipant.getCharacter();
         
         Integer[] rolls = diceRollerService.rollDice(1, 20);
@@ -108,7 +108,7 @@ public class BattleStepService {
                                     .rollMessage(playerRoll.getMessage())
                                     .playerCharacter(player.getCharacter().getName())
                                     .computerCharacter(computer.getCharacter().getName())
-                                    .message("O " + winner + "ataca primeiro!")
+                                    .message("O " + winner + " ataca primeiro!")
                                     .build();
 
         return message;
@@ -152,7 +152,7 @@ public class BattleStepService {
     }
 
     private List<BattleParticipant> getAliveBattleParticipants(Battle battle) {
-        List<BattleParticipant> participants = battleParticipantRepository.findActiveParticipants(battle);
+        List<BattleParticipant> participants = battleParticipantRepository.findActiveParticipants(battle.getId());
         return participants;
     }
 
@@ -223,7 +223,8 @@ public class BattleStepService {
         }
 
         String nextStep = battle.getNextStep();
-        if (operation != nextStep) {
+        if (!operation.equals(nextStep)) {
+            
             switch(nextStep) {
                 case "attack":
                     resultMessage = new BattleDTO.Builder()
@@ -243,10 +244,15 @@ public class BattleStepService {
                         .build();
                     break;
 
+                case "initiative":
+                    resultMessage = new BattleDTO.Builder()
+                    .message("Você deve rolar a iniciativa primeiro.")
+                    .build();
+                    break;
                 default:
                     resultMessage = new BattleDTO.Builder()
-                        .message("Você deve rolar a iniciativa primeiro.")
-                        .build();
+                    .message("Algo deu errado.")
+                    .build();
                     break;
             }
             return resultMessage;
@@ -254,9 +260,11 @@ public class BattleStepService {
         
         List<BattleParticipant> participants = getAliveBattleParticipants(battle);
         BattleParticipant player = getCharacter(participants, true);
+
+
         BattleParticipant computer = getCharacter(participants, false);
 
-        if (operation == "attack") {
+        if ("attack".equals(operation)) {
             RollResultDTO attack = rollAttack(player);
             RollResultDTO defense = rollAttack(computer);
 
@@ -278,7 +286,7 @@ public class BattleStepService {
             }
         }
 
-        if (operation == "damage") {
+        else if ("damage".equals(operation)) {
             RollResultDTO damage = rollDamage(player);
             String damageMessage = "O " + player.getCharacter().getName() + " golpeia firme e causa " + damage.getTotal() + " pontos de dano em seu oponente.";
             resultMessage = new BattleDTO.Builder()
@@ -293,7 +301,7 @@ public class BattleStepService {
             takeDamage(computer, damage);
         }
 
-        if (operation == "defense") {
+        else if ("defense".equals(operation)) {
             RollResultDTO attack = rollAttack(computer);
             RollResultDTO defense = rollAttack(player);
 
@@ -337,7 +345,7 @@ public class BattleStepService {
             resultMessage.setMessage(resultMessage.getMessage() + "\nA batalha acabou. Você foi derrotado.");
         }
 
-        if (computer.getHp() <= 0) {
+        else if (computer.getHp() <= 0) {
             endGame(battle);
             resultMessage.setMessage(resultMessage.getMessage() + "\nA batalha acabou. Você venceu!");
         }

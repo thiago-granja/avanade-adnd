@@ -23,9 +23,9 @@ public class BattleStepController {
         return battleStepService.runBattleStep(battle_id, "attack");
     }
 
-    @PostMapping("/{battle_id}/defend")
+    @PostMapping("/{battle_id}/defense")
     public BattleDTO defend(@PathVariable UUID battle_id) {
-        return battleStepService.runBattleStep(battle_id, "defend");
+        return battleStepService.runBattleStep(battle_id, "defense");
     }
 
     @PostMapping("/{battle_id}/damage")

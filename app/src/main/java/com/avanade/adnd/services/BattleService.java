@@ -45,6 +45,7 @@ public class BattleService {
             
             player = new BattleParticipant(playerCharacter, true);
             player.setBattle(newBattle);
+            player.setHp(playerCharacter.getHp());
             battleParticipantRepository.save(player);
 
             if (battleDTO.getComputer_character() != null) {
@@ -53,6 +54,7 @@ public class BattleService {
             
                 computer = new BattleParticipant(computerCharacter, false);
                 computer.setBattle(newBattle);
+                computer.setHp(computerCharacter.getHp());
                 battleParticipantRepository.save(computer);
             
             } else {

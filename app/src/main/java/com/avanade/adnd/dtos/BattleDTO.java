@@ -22,6 +22,8 @@ public class BattleDTO {
         this.turn = builder.turn;
     }
 
+    BattleDTO() {}
+
     public static class Builder {
         private String player_character;
         private String computer_character;
