@@ -25,9 +25,9 @@ public class BattleStepController {
     public ResponseEntity<?> processBattleStep(@PathVariable UUID battle_id, @PathVariable String operation) {
 
         if (!Arrays.asList("attack", "defense", "initiative", "damage").contains(operation)) {
-            return new ResponseEntity<>("Movimento inválido. As opcoes disponíveis são attack, defense, damage, initiative.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Movimento inválido. As opcões disponíveis são attack, defense, damage, initiative.", HttpStatus.BAD_REQUEST);
         }
-        
+
         BattleDTO battleResult = battleStepService.runBattleStep(battle_id, operation);
         return new ResponseEntity<>(battleResult, HttpStatus.OK);
     }
