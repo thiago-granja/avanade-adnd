@@ -6,6 +6,7 @@ Este projeto é um Simulador de Batalhas RPG 1v1 usando o sistema ADND. Os jogad
 O projeto já vem pré-configurado com 6 personagens (3 heróis e 3 monstros), porém o jogador tem a liberdade de criar quaisquer opções que lhe venham à mente.
 
 Esta aplicação é uma API REST e foi desenvolvida utilizando Java + Spring Boot, com banco de dados PostgreSQL e containerização com Docker.
+<br><br>
 
 
 ## Introdução ao sistema de Combate
@@ -28,18 +29,22 @@ Os personagens possuem os atributos abaixo:
     - Agility é sua agilidade, este valor é adicionado às jogadas de ataque e defesa.
     - Dice Quantity e Dice Faces são a quantidade de dados e a quantidade de lados do dado, respectivamente. Um dado de 12 lados é conhecido como 1d12, por exemplo. Neste caso, diceQuantity = 1 e diceFaces = 12. É utilizado para rolagens de dano.
     - Os atributos gerais devem ser números inteiros de 1 a 30. Já para os dados, as faces devem ser de 1 a 20 e a quantidade de 1 a 10.
+<br><br>
+
+## Fluxo de jogo
 
 - A primeira ação no combate é a rolagem de iniciativa, que determinará a sequência de ação dos lutadores.
 - Após isso, serão realizados testes de ataque/defesa para checar se um golpe conecta (o valor da rolagem de ataque deve superior à da defesa)
 - Caso o ataque seja bem-sucedido, a próxima etapa é o cálculo de dano.
 - Personagens do computador realizam a jogada de ataque e dano (se aplicável) de uma só vez através do endpoint de defesa do usuário. A funcionalidade foi desenvolvida assim para agilizar o processo do jogo e focar na rolagem de dados do jogador.
 - No momento em que o primeiro personagem da batalha perder todos seus pontos de vida, ele é derrotado e a batalha é finalizada.
-
+<br><br>
 
 ## Pré-requisitos
 
 - Docker
 - Docker Compose
+<br><br>
 
 ## Configuração
 
@@ -50,6 +55,7 @@ Os personagens possuem os atributos abaixo:
 3. Copie o arquivo `.env.example` para `.env`:
     ```bash
         cp .env.example .env
+  <br>
 4. Preencha as variáveis de ambiente no arquivo .env. Por exemplo:
 
     ```bash
@@ -60,12 +66,14 @@ Os personagens possuem os atributos abaixo:
     POSTGRES_USER=myuser
     PORT=8080
     POSTGRES_URL=jdbc:postgresql://localhost:5432/mydatabase
+<br>
+
 ## Como rodar
 1. Inicie os serviços usando Docker Compose: 
     ```bash
         docker-compose up -d
 * Nota: Se o contêiner do banco de dados parar por qualquer motivo, execute o comando acima novamente.
-
+<br><br>
 2. Aguarde alguns segundos para que o banco de dados inicie corretamente.
 
 3. Após o banco de dados estar em execução, rode a aplicação com o seguinte comando:
@@ -74,10 +82,10 @@ Os personagens possuem os atributos abaixo:
     docker-compose up app
 4. O aplicativo agora deve estar rodando na porta especificada (por padrão, 8080). Agora você pode usar a API para criar personagens, iniciar batalhas e muito mais.
 
+<br><br>
+# Endpoints
 
-## Endpoints
-
-### Personagens
+## Personagens
 
 1. **Listar Todos os Personagens**:
     - **Endpoint**: `GET /characters`
@@ -131,8 +139,8 @@ Os personagens possuem os atributos abaixo:
 
 6. **Deletar um Personagem**:
     - **Endpoint**: `DELETE /characters/{id}`
-
-### Batalhas
+<br><br>
+## Batalhas
 
 1. **Criar uma Nova Batalha**:
     - **Endpoint**: `POST /battle`
