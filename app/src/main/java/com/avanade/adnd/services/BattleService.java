@@ -26,9 +26,6 @@ public class BattleService {
     private BattleRepository battleRepository;
 
     @Autowired
-    private BattleStepService battleStepService;
-
-    @Autowired
     private BattleParticipantRepository battleParticipantRepository;
 
 
