@@ -216,7 +216,7 @@ public class BattleStepService {
                         .build();
             return resultMessage;
         }
-    
+
         String nextStep = battle.getNextStep();
         if (!operation.equals(nextStep)) {
     
@@ -349,4 +349,5 @@ public class BattleStepService {
 
         return resultMessage;
     }
+
 }
