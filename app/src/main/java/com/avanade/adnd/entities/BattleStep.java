@@ -1,5 +1,6 @@
 package com.avanade.adnd.entities;
 
+import java.util.List;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
@@ -18,15 +19,17 @@ public class BattleStep {
     @ManyToOne
     @JoinColumn(name = "battle_id")
     private Battle battle;
-    
-    private Short turn;
-    private Short turnStep;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "battle_participant_id")
-    private BattleParticipant battleParticipant;
+    @JoinColumn(name = "battle_participant_player_id")
+    private BattleParticipant player;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "battle_participant_computer_id")
+    private BattleParticipant computer;
 
-    private String playerMessage;
-    private String stepMessage;
-    private Short diceRoll;
+    private List<Integer> roll;
+    private String roll_message;
+    private String message;
+    private Integer turn;
 }

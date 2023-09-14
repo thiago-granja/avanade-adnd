@@ -11,6 +11,7 @@ import lombok.Data;
 public class Battle {
     @Id
     private UUID id = UUID.randomUUID();
+    private Integer turn;
     private String nextStep;
     private Boolean isActive;
 }
