@@ -1,10 +1,14 @@
-# Simulador de Batalhas RPG
+# Simulador de Batalhas 1v1 RPG
 
 
-Este projeto é um Simulador de Batalhas RPG 1v1 usando o sistema ADND. Os jogadores podem criar personagens, iniciar batalhas e realizar várias operações de batalha, como cálculos de ataque, defesa, iniciativa e dano, através de uma API REST. O projeto já vem pré-configurado com 6 personagens (3 heróis e 3 monstros), porém o jogador tem a liberdade de criar quaisquer opções que lhe venham à mente.
+Este projeto é um Simulador de Batalhas RPG 1v1 usando o sistema ADND. Os jogadores podem criar personagens, iniciar batalhas e realizar várias operações de batalha, como cálculos de ataque, defesa, iniciativa e dano.
+
+O projeto já vem pré-configurado com 6 personagens (3 heróis e 3 monstros), porém o jogador tem a liberdade de criar quaisquer opções que lhe venham à mente.
+
+Esta aplicação é uma API REST e foi desenvolvida utilizando Java + Spring Boot, com banco de dados PostgreSQL e containerização com Docker.
 
 
-## Overview
+## Introdução ao sistema de Combate
 Os personagens possuem os atributos abaixo:
 -      {
         "name": ,
@@ -19,10 +23,16 @@ Os personagens possuem os atributos abaixo:
     - Name é o nome do personagem.
     - Type se refere ao tipo, sendo hero / monster. Você sempre lutará contra um personagem do tipo monster.
     - HP é a quantidade de pontos de vida que o personagem possui. Quando a vida de um dos personagens da batalha chega a 0 a batalha acaba e um vencedor é definido.
-    - Strength é sua força, influenciando nas jogadas de ataque e dano.
-    - Defense é sua defesa, influenciando nas jogadas de defesa.
-    - Agility é sua agilidade, influenciando em jogadas de ataque e defesa.
+    - Strength é sua força, este valor é adicionado às jogadas de ataque e dano.
+    - Defense é sua defesa, este valor é adicionado às jogadas de defesa.
+    - Agility é sua agilidade, este valor é adicionado às jogadas de ataque e defesa.
     - Dice Quantity e Dice Faces são a quantidade de dados e a quantidade de lados do dado, respectivamente. Um dado de 12 lados é conhecido como 1d12, por exemplo. Neste caso, diceQuantity = 1 e diceFaces = 12. É utilizado para rolagens de dano.
+
+- A primeira ação no combate é a rolagem de iniciativa, que determinará a sequência de ação dos lutadores.
+- Após isso, serão realizados testes de ataque/defesa para checar se um golpe conecta (o valor da rolagem de ataque deve superior à da defesa)
+- Caso o ataque seja bem-sucedido, a próxima etapa é o cálculo de dano.
+- Personagens do computador realizam a jogada de ataque e dano (se aplicável) de uma só vez através do endpoint de defesa do usuário. A funcionalidade foi desenvolvida assim para agilizar o processo do jogo e focar na rolagem de dados do jogador.
+- No momento em que o primeiro personagem da batalha perder todos seus pontos de vida, ele é derrotado e a batalha é finalizada.
 
 
 ## Pré-requisitos
