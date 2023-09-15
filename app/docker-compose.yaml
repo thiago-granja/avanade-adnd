@@ -17,7 +17,7 @@ services:
     expose: 
       - ${PORT}
     ports:
-      - '${PORT}:${PORT}'
+      - '${PORT}:8080'
     depends_on:
       - postgres
     networks:

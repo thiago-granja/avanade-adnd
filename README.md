@@ -75,21 +75,18 @@ Os personagens possuem os atributos abaixo:
 
 ## Como rodar
 1. Inicie os serviços usando Docker Compose: 
+
     ```bash
         docker-compose up -d
-* Nota: Se o contêiner do banco de dados parar por qualquer motivo, execute o comando acima novamente.
-<br><br>
+<br>
+
 2. Aguarde alguns segundos para que o banco de dados inicie corretamente.
-  
+
+    - Se o contêiner do banco de dados ou da aplicação pararem por qualquer motivo, execute o comando acima novamente.
+
   <br>
 
-3. Após o banco de dados estar em execução, rode a aplicação com o seguinte comando:
-
-    ```bash
-    docker-compose up app
-  <br>
-
-4. O aplicativo agora deve estar rodando na porta especificada (por padrão, 8080). Agora você pode usar a API para criar personagens, iniciar batalhas e muito mais.
+3. O aplicativo agora deve estar rodando na porta especificada (por padrão, 8080). Agora você pode usar a API para criar personagens, iniciar batalhas e muito mais.
 
 <br><br>
 # Endpoints
